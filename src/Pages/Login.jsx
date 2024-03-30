@@ -1,22 +1,33 @@
 
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { app } from "../firebase/friebase.config";
+import { useState } from "react";
 
 
 
 const Login = () => {
+    const [errorMessage, setErrorMessage] = useState('')
+    const [success,setSuccess]=useState("")
     const auth = getAuth(app);
     const handelSubmit = (e) => {
         e.preventDefault()
         const email = e.target.email.value
         const password = e.target.password.value
-        console.log(email, password)
+        // clint site password validatin
+        if(password.length<6){
+            setErrorMessage("please 6 loger password type now")
+            return
+        }
+        // set rest erro
+        setErrorMessage("")
+        setSuccess("")
         createUserWithEmailAndPassword(auth, email, password)
             .then(result => {
                 console.log(result.user)
+                setSuccess("You Have Logdin")
             })
             .catch(error => {
-                console.error( error.code)
+                setErrorMessage(error.message)
             })
 
     }
@@ -48,7 +59,14 @@ const Login = () => {
                             <div className="form-control mt-6">
                                 <button className="btn btn-primary">Login</button>
                             </div>
+                            {
+                                errorMessage && <p className="text-red-500">{errorMessage}</p>
+                            }
+                            {
+                                success && <p className="text-green-500">{success}</p>
+                            }
                         </form>
+
                     </div>
                 </div>
             </div>
